@@ -2,7 +2,9 @@ const express = require('express')
 const path = require('path')
 const socketio = require('socket.io')
 const http = require('http')
-const moment = require('moment')
+const {formatMessage} = require('./utils/messages')
+const {users, addToUsers, retrieveUserObj, deleteUserObj} = require('./utils/users')
+const {roomMap} = require('./utils/roomMapping')
 
 const app = express()
 const server = http.createServer(app)
@@ -10,16 +12,29 @@ const io = socketio(server)
 
 io.on('connection', socket => {
     console.log('A new WS connection')
-    socket.broadcast.emit('message', 'A new user has joined the chat')
+    socket.on('joinRoom', (userObj) => {
+        userObj['socketid'] = socket.id
+        addToUsers(userObj)
+        // Add the user to the room
+        socket.join(userObj.room)
+        // Welcome message
+        socket.emit('message', formatMessage(`Welcome to ${roomMap.get(userObj.room)} chatroom`, 'Chatbot'))
+        socket.broadcast.to(userObj.room).emit('message', formatMessage('A new user has joined the chat', 'Chatbot'))
+    })
     socket.on('client_message', (msg_obj) => {
         const {username, room, msg} = msg_obj
-        msg_obj_with_time = {username, room, msg, time: moment().format('h:mm a')}
-        io.emit('message', msg_obj_with_time)
+        msg_obj_with_time = formatMessage(msg, username)
+        io.to(msg_obj.room).emit('message', msg_obj_with_time)
     })
-    socket.on('message', (msg) => console.log(msg))
-
+    //console.log(users)
     socket.on('disconnect', () => {
-        io.emit('message', 'A user has left the chat')
+        const user = deleteUserObj(socket.id)
+        console.log('Left user socket id', socket.id)
+        console.log('Left user', user)
+        console.log('users leave', users)
+        if (user.length > 0) {
+            io.to(user[0].room).emit('message', formatMessage('A user has left the chat', 'Chatbot'))
+        }
     })
 })
 
