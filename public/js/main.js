@@ -1,12 +1,21 @@
+
 const socketClient = io()
 
 
 const msgEl = document.querySelector('.chat-form-container form').msg
 const chatForm = document.querySelector('#chat-form')
-
+const roomNameSpace = document.querySelector('#room-name')
+const roomMap = new Map()
+roomMap.set('lakers', 'L.A Lakers')
+roomMap.set('magic', 'Orlando Magic')
+roomMap.set('blazers', 'Portland Trailblazers')
+roomMap.set('clippers', 'L.A Clippers')
+roomMap.set('state', 'Golden State Warriors')
+    
 const queryIndex = window.location['href'].indexOf('?')
 const queryString = window.location['href'].substring(queryIndex+1)
 const {username, room} = Qs.parse(queryString)
+roomNameSpace.textContent = roomMap.get(room)
 socketClient.emit('connection')
 socketClient.emit('joinRoom', {username, room})
 socketClient.on('message', (msg) => displayToChatMessages(msg))

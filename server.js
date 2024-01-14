@@ -29,9 +29,6 @@ io.on('connection', socket => {
     //console.log(users)
     socket.on('disconnect', () => {
         const user = deleteUserObj(socket.id)
-        console.log('Left user socket id', socket.id)
-        console.log('Left user', user)
-        console.log('users leave', users)
         if (user.length > 0) {
             io.to(user[0].room).emit('message', formatMessage('A user has left the chat', 'Chatbot'))
         }

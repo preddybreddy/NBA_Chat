@@ -11,7 +11,10 @@ function retrieveUserObj(socketId) {
 
 function deleteUserObj(socketId) {
     const indexToBeDeleted = users.findIndex(user => user.socketid === socketId)
-    return users.splice(indexToBeDeleted, 1)
+    if (indexToBeDeleted !== -1) {
+        return users.splice(indexToBeDeleted, 1)
+    }
+    return []
 }
 
 module.exports = {users: users, addToUsers, retrieveUserObj, deleteUserObj}
