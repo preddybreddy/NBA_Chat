@@ -12,7 +12,9 @@ roomMap.set('magic', 'Orlando Magic')
 roomMap.set('blazers', 'Portland Trailblazers')
 roomMap.set('clippers', 'L.A Clippers')
 roomMap.set('state', 'Golden State Warriors')
-    
+
+const leaveRoomBtn = document.querySelector('#leave-btn')
+
 const queryIndex = window.location['href'].indexOf('?')
 const queryString = window.location['href'].substring(queryIndex+1)
 const {username, room} = Qs.parse(queryString)
@@ -52,3 +54,12 @@ function displayUsers(userList) {
     usersTag.innerHTML = stringListElements
 }
 socketClient.on('updateSidebar', (usersList) => displayUsers(usersList))
+
+leaveRoomBtn.addEventListener('click', () => {
+    const response = confirm('Are you sure you want to leave the chat room?')
+    if (response) {
+        window.location['href'] = '/index.html'
+    }else {
+
+    }
+})
