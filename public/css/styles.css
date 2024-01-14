@@ -163,7 +163,18 @@ body {
     flex: 1;
 }
 
+/* chat-sidebar */
+
 #room-name {
     font-size: 16px;
     text-align: center;
 }
+#users {
+    margin-bottom: 0;
+    margin-top: -15px;
+}
+#users li {
+    margin-left: 20px;
+    height: 10px;
+}
+

@@ -17,9 +17,13 @@ io.on('connection', socket => {
         addToUsers(userObj)
         // Add the user to the room
         socket.join(userObj.room)
+        // Add user to the chat sidebar
+        io.to(userObj.room).emit('updateSidebar', users)
+
         // Welcome message
         socket.emit('message', formatMessage(`Welcome to ${roomMap.get(userObj.room)} chatroom`, 'Chatbot'))
         socket.broadcast.to(userObj.room).emit('message', formatMessage('A new user has joined the chat', 'Chatbot'))
+
     })
     socket.on('client_message', (msg_obj) => {
         const {username, room, msg} = msg_obj
@@ -31,6 +35,7 @@ io.on('connection', socket => {
         const user = deleteUserObj(socket.id)
         if (user.length > 0) {
             io.to(user[0].room).emit('message', formatMessage('A user has left the chat', 'Chatbot'))
+            io.to(user[0].room).emit('updateSidebar', users)
         }
     })
 })

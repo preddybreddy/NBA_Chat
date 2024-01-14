@@ -5,6 +5,7 @@ const socketClient = io()
 const msgEl = document.querySelector('.chat-form-container form').msg
 const chatForm = document.querySelector('#chat-form')
 const roomNameSpace = document.querySelector('#room-name')
+const usersTag = document.querySelector('#users')
 const roomMap = new Map()
 roomMap.set('lakers', 'L.A Lakers')
 roomMap.set('magic', 'Orlando Magic')
@@ -41,3 +42,13 @@ function outputMessage(e) {
 }
 
 chatForm.addEventListener('submit', (e) => outputMessage(e))
+
+function displayUsers(userList) {
+    const listElements = userList.map(user => `<li>${user.username}</li>`)
+    let stringListElements = ''
+    for (let i = 0; i < listElements.length; i++) {
+        stringListElements += listElements[i]
+    }
+    usersTag.innerHTML = stringListElements
+}
+socketClient.on('updateSidebar', (usersList) => displayUsers(usersList))
